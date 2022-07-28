@@ -60,6 +60,11 @@ class UserController extends Controller
         return response('', 204);
     }
 
+    public function show(string $id)
+    {
+        return new UserResource($this->userRepository->findById($id));
+    }
+
     public function attachCar($id, Request $request): UserResource
     {
         $data = $this->validate($request, [

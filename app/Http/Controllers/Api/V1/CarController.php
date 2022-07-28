@@ -51,6 +51,11 @@ class CarController extends Controller
         return new CarResource($car);
     }
 
+    public function show(string $id): CarResource
+    {
+        return new CarResource($this->carRepository->findById($id));
+    }
+
     public function destroy(string $id, DestroyCarService $service)
     {
         $this->execute($service, $id);
