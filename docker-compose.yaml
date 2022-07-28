@@ -1,0 +1,44 @@
+version: '3.3'
+
+volumes:
+  car-api-database:
+    external: true
+
+networks:
+  car-api:
+    external: true
+
+services:
+  # Database service running with mysql 5.7
+  car-api-database:
+    image: mysql:5.7
+    command: mysqld --sql_mode=""
+    volumes:
+      - car-api-database:/var/lib/mysql
+    ports:
+      - '33060:3306'
+    environment:
+      - 'MYSQL_DATABASE=carapi'
+      - 'MYSQL_USER=homestead'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ALLOW_EMPTY_PASSWORD=true'
+    networks:
+      - car-api
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WITH_XDEBUG: 'false'
+    working_dir: /var/www
+    volumes:
+      - './:/var/www'
+    expose:
+      - '9024' # xdebug port to connect PHP debug
+    ports:
+      - '4000:80'
+    networks:
+      - car-api
+    depends_on:
+      - car-api-database
